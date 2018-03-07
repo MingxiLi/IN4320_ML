@@ -1,9 +1,8 @@
-loss = [];
-r = linspace(-4, 4, 100);
+x = -4:0.01:4;
+for i = 1:length(x)
+    y(i) = (1 - exp(-2*x(i)))/ (1 + exp(-2*x(i)));
 
-    for j = 1:length(r)
-        loss(j) = (1-exp(-2*r(j)))/(1+exp(-2*r(j)));
-    end
-    plot(r,loss);
-    xlabel('r+');
-    ylabel('loss function');
+end
+
+figure
+plot(x, y, 'r')
