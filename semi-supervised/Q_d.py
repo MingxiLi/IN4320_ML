@@ -8,6 +8,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression
 from matplotlib import pyplot as plt
 from sklearn.metrics import log_loss
+from sklearn.datasets import make_classification
 
 
 def ssclustering(X_l, y_l, X_u):
@@ -79,29 +80,17 @@ def co_training(X_l, y_l, X_u):
 
 
 # Read data
-dataset = pd.read_csv("magic04.csv")
-# Replace labels
-dataset['Column11'] = dataset['Column11'].map({'g': 0, 'h': 1}).astype(int)
+X, y = make_classification(n_samples=2000, n_features=2, n_redundant=0,
+                           n_informative=2, n_clusters_per_class=2)
+plt.figure()
+plt.scatter(X[:, 0], X[:, 1], marker='o', c=y)
 
-X = dataset.values[:, :-1]
-y = dataset.values[:, -1]
 
 # Normalization
 X_norm = preprocessing.scale(X)
 
 num_labeled = 25
 num_unlabeled = [0, 10, 20, 40, 80, 160, 320, 640, 1280]
-
-'''
-for index, i in enumerate(num_unlabeled):
-        # Get train and test set
-        X_train, X_test, y_train, y_test = train_test_split(X_norm, y)
-        X_labeled = X_train[:num_labeled]
-        y_labeled = y_train[:num_labeled]
-        X_unlabeled = X_train[num_labeled: num_labeled + num_unlabeled[index]]
-        y_unlabeled = y_train[num_labeled: num_labeled + num_unlabeled[index]]
-        X_trnall, y_trnall = co_training(X_labeled, y_labeled, X_unlabeled)
-'''
 
 err_lda = {}
 err_clustering = {}
@@ -191,7 +180,7 @@ for index, i in enumerate(num_unlabeled):
     avglog_lda.append(sum_log_lda / len(iteration))
     avglog_clustering.append(sum_log_clustering / len(iteration))
     avglog_co.append(sum_log_co / len(iteration))
-
+print('End')
 plt.figure()
 plt.plot(num_unlabeled, avgerr_lda, label='lda')
 plt.plot(num_unlabeled, avgerr_clustering, label='clustering')
@@ -199,7 +188,6 @@ plt.plot(num_unlabeled, avgerr_co, label='co-training')
 plt.xlabel('Number of unlabeled samples')
 plt.ylabel('Error rate')
 plt.legend()
-plt.show()
 
 plt.figure()
 plt.semilogx(num_unlabeled, avglog_lda, label='lda')
@@ -209,5 +197,6 @@ plt.xlabel('Number of unlabeled samples')
 plt.ylabel('log-likelihood')
 plt.legend()
 plt.show()
+
 
 
